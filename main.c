@@ -34,14 +34,14 @@ int main() {
 	c_graph g;
 	g = c_minigraph();
 
-	for (int i = 1; i<100; i++){; 
+	for (int i = 1; i<100; i++){
 						move(g, i);
 	}
 	output(g);
-	return 1;
+	return 0;
 }
 
-// single move routine ---------------------------------------------------------------
+// single move routine -------------------------------------------------
 
 void move(c_graph g, int n){
 	int degree = g.d_graph.deg;
@@ -64,7 +64,7 @@ void move(c_graph g, int n){
 		for (int j = 0; j < degree; j++){
 			
 			double distance = dist(g.X[i], g.Y[i], g.X[g.d_graph.A[degree*i+j]], g.Y[g.d_graph.A[degree*i+j]]);
-			printf("%i, %i, %f , %f, %f, loop, distance: %f \n", i, j, constant, force_x[i], force_y[i], distance);
+			//			printf("%i, %i, %f , %f, %f, loop, distance: %f \n", i, j, constant, force_x[i], force_y[i], distance);
 			force_x[i] -= constant * (g.X[i]- g.X[g.d_graph.A[degree*i+j]]) * distance * distance;
 			force_y[i] -= constant * (g.Y[i]- g.Y[g.d_graph.A[degree*i+j]]) * distance * distance;
 		}
@@ -80,14 +80,14 @@ void move(c_graph g, int n){
 		
 		g.X[i] +=  min(norm, c) * force_x[i]/norm; 
 		g.Y[i] +=  min(norm, c) * force_y[i]/norm; 
-		printf("Iteration %i \n", i);
+		//printf("Iteration %i \n", i);
 	}
 
 	return;
 }
 
 // initializing ---------------------------------------------------------
-// k: number of nodes on the unit circle
+// k: number of nodes on the unit circle (boundary nodes)
 c_graph set_nodes(d_graph g, int k){
 	c_graph h;
 	h.X = malloc(g.number_of_nodes*sizeof(double));
@@ -132,7 +132,8 @@ double cool(int i, int n){
 
 d_graph d_minigraph(){ 
 	d_graph g;
-	g.number_of_nodes = 6;
+		g.number_of_nodes = 6;
+	//g.number_of_nodes = 5;
 	g.deg = 3;
 	// d_graph* h = &g; h->A is the same as (*g).A, h[i] is the same as *(h + i)
 	g.A = malloc(g.deg*g.number_of_nodes*sizeof(int)); // allocate(A[d*n]), if A(:) :: int
@@ -141,23 +142,42 @@ d_graph d_minigraph(){
 		g.A[g.deg*i+1] = (i+2)%(g.number_of_nodes);
 		g.A[g.deg*i+2] = (i+3)%(g.number_of_nodes);		
 	}
+	/* g.A[0] = 1; */
+	/* g.A[1] = 2; */
+	/* g.A[2] = 3; */
+	/* g.A[3] = 0; */
+	/* g.A[4] = 2; */
+	/* g.A[5] = 4; */
+	/* g.A[6] = 0; */
+	/* g.A[7] = 1; */
+	/* g.A[8] = 5; */
+	/* g.A[9] = 0; */
+	/* g.A[10] = 4; */
+	/* g.A[11] = 5; */
+	/* g.A[12] = 1; */
+	/* g.A[13] = 3; */
+	/* g.A[14] = 5; */
+	/* g.A[15] = 3; */
+	/* g.A[16] = 4; */
+	/* g.A[17] = 2; */
+	
 	g.A[0] = 1;
-	g.A[1] = 2;
-	g.A[2] = 3;
+	g.A[1] = 3;
+	g.A[2] = 4;
 	g.A[3] = 0;
-	g.A[4] = 2;
-	g.A[5] = 4;
-	g.A[6] = 0;
-	g.A[7] = 1;
+	g.A[4] = 4;
+	g.A[5] = 5;
+	g.A[6] = 1;
+	g.A[7] = 3;
 	g.A[8] = 5;
 	g.A[9] = 0;
-	g.A[10] = 4;
+	g.A[10] = 2;
 	g.A[11] = 5;
-	g.A[12] = 1;
-	g.A[13] = 3;
+	g.A[12] = 0;
+	g.A[13] = 1;
 	g.A[14] = 5;
-	g.A[15] = 3;
-	g.A[16] = 4;
+	g.A[15] = 4;
+	g.A[16] = 3;
 	g.A[17] = 2;
 	return g;
 }
@@ -190,12 +210,12 @@ c_graph c_minigraph(){
 	tetrahedron.X[5] = -0.5*eps;
 	tetrahedron.Y[5] = 0.5*sqrt(3.0)*eps;
 
-	//tetrahedron = set_nodes(tetrahedron.d_graph, 3);
+	tetrahedron = set_nodes(tetrahedron.d_graph, 4);
 	return tetrahedron;
 }
 
 
-// Output routine ------------------------------------------------------------------
+// Output routine -----------------------------------------------------
 
 void output(c_graph g ){
 	FILE *f = fopen("output_graph.tex", "w");
@@ -233,5 +253,5 @@ void output(c_graph g ){
 
 	fclose(f);
 	// create pdf
-	//system("pdflatex output_graph.tex");
+	system("pdflatex output_graph.tex");
 }
